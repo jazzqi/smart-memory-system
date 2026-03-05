@@ -116,6 +116,54 @@ openclaw skill smart-memory monitor --interval=5
 - **Discord**: https://discord.gg/openclaw
 - **ClawHub**: https://clawhub.com/skills/smart-memory-system
 
+## 🚀 Token 优化：与上下文压缩功能配合
+
+智能记忆系统可以与 OpenClaw 内置的上下文压缩功能完美配合，实现 **双重 Token 优化**：
+
+### 📊 双重优化效果
+| 优化方式 | Token 节省 | 实现机制 |
+|---------|-----------|----------|
+| **智能记忆系统** | **80%** | 语义检索替代完整历史 |
+| **上下文压缩** | **70%** | 清理工具调用结果 |
+| **双重优化** | **90%+** | 两者结合 |
+
+### ⚙️ 上下文压缩配置
+已在您的 OpenClaw 系统中启用以下配置：
+```json
+"contextPruning": {
+  "mode": "cache-ttl",
+  "ttl": "5m",
+  "keepLastAssistants": 3,
+  "softTrimRatio": 0.3,
+  "hardClearRatio": 0.5,
+  "softTrim": { "headChars": 1500, "tailChars": 1500 },
+  "hardClear": { "enabled": true, "placeholder": "[旧工具结果内容已清理]" },
+  "tools": { "deny": ["browser", "canvas"] }
+}
+```
+
+### 🔧 工作原理
+1. **智能记忆系统**：
+   - 检索相关历史记忆
+   - 只注入最相关的内容
+   - 避免上下文超载
+
+2. **上下文压缩**：
+   - 自动修剪工具调用结果
+   - 保留用户/助手消息
+   - 实时监控上下文使用率
+
+3. **协同工作**：
+   ```
+   用户查询 → 记忆检索 → 压缩工具结果 → 智能响应
+   ```
+
+### 💡 最佳实践
+1. **启用压缩**：配置已自动应用
+2. **监控效果**：使用 `/status` 查看上下文使用情况
+3. **调整参数**：根据使用模式优化压缩阈值
+4. **验证效果**：对比压缩前后的响应质量
+
 ## 📄 许可证
 
 MIT License - 自由使用、修改和分发

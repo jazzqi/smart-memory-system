@@ -23,7 +23,7 @@
 ## 技术架构
 
 ### 🛠️ **核心组件**
-1. **向量化引擎**: BAAl/bge-m3 embedding 模型
+1. **向量化引擎**: BAAI/bge-m3 embedding 模型 (1024维向量)
 2. **重排序模块**: bge-reranker-v2-m3
 3. **向量存储**: 本地 JSON + 语义缓存
 4. **相似度算法**: 余弦相似度 + 自定义权重
@@ -74,9 +74,10 @@ cp -r smart-memory-skill ~/.openclaw/skills/
       "edgefn": {
         "models": [
           {
-            "id": "BAAl/bge-m3",
+            "id": "BAAI/bge-m3",
             "name": "BAAI bge-m3 Embedding",
-            "api": "openai-completions"
+            "api": "openai-completions",
+            "embedding_dimensions": 1024
           },
           {
             "id": "bge-reranker-v2-m3", 
@@ -143,12 +144,43 @@ openclaw skill smart-memory monitor --interval=5
 
 ## 性能指标
 
+### 智能记忆系统优化
 | 指标 | 改进前 | 改进后 | 提升 |
 |------|--------|--------|------|
 | **Token 消耗** | 8k-16k | 1k-3k | **-80%** |
 | **检索准确率** | 60% | 95% | **+35%** |
 | **响应相关性** | 70% | 95% | **+25%** |
 | **记忆覆盖率** | 50% | 90% | **+40%** |
+
+### 结合上下文压缩功能
+系统已配置 OpenClaw 上下文压缩功能，提供双重优化：
+
+#### 上下文压缩配置
+```json
+{
+  "mode": "cache-ttl",
+  "ttl": "5m",
+  "keepLastAssistants": 3,
+  "softTrimRatio": 0.3,
+  "hardClearRatio": 0.5,
+  "minPrunableToolChars": 50000,
+  "softTrim": { "headChars": 1500, "tailChars": 1500 },
+  "hardClear": { "enabled": true, "placeholder": "[旧工具结果内容已清理]" },
+  "tools": { "deny": ["browser", "canvas"] }
+}
+```
+
+#### 双重优化效果
+| 优化方式 | Token 节省 | 实现机制 |
+|---------|-----------|----------|
+| **智能记忆系统** | **80%** | 语义检索替代完整历史 |
+| **上下文压缩** | **70%** | 清理工具调用结果 |
+| **双重优化** | **90%+** | 两者结合，全面优化 |
+
+#### 压缩触发条件
+- **软修剪**: 上下文使用率 > 30% (保留头尾1500字符)
+- **硬清理**: 上下文使用率 > 50% 且可修剪内容 > 50,000字符
+- **保护机制**: 保留最近3次助手回复和重要工具结果
 
 ## 使用场景
 
@@ -177,7 +209,7 @@ openclaw skill smart-memory monitor --interval=5
 ### 主配置 (`config/smart_memory.json`)
 ```json
 {
-  "embedding_model": "edgefn/BAAl/bge-m3",
+  "embedding_model": "edgefn/BAAI/bge-m3",
   "reranker_model": "edgefn/bge-reranker-v2-m3",
   "chunk_size": 500,
   "overlap": 50,

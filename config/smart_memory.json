@@ -7,10 +7,12 @@
   "license": "MIT",
   
   "models": {
-    "embedding": "edgefn/BAAl/bge-m3",
+    "embedding": "edgefn/BAAI/bge-m3",
     "reranker": "edgefn/bge-reranker-v2-m3",
     "fallback_embedding": "qwen-portal/coder-model",
-    "supported_providers": ["edgefn", "qwen-portal"]
+    "supported_providers": ["edgefn", "qwen-portal"],
+    "embedding_dimensions": 1024,
+    "api_endpoint": "/v1/embeddings"
   },
   
   "processing": {
